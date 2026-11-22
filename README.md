@@ -1,110 +1,93 @@
 # AI Art Rating — Web Edition v6
+**はじめてプログラミングを学ぶ人のための、AIアート鑑賞・採点アプリと日本語教科書**
 
-外部で生成したAI画像50枚を鑑賞し、0〜100点で採点・比較・分析するWebアプリ。
-手描きのUIを基に、**白背景・黒文字・余白・中央の作品・1/50表示・左の目盛り・下部の評価スライダー**を維持しています。
+> 50枚のAI生成画像を鑑賞し、0～100点で評価・比較・集計するWebアプリ。手描きのスケッチに基づく、余白の大きい白黒のUIを採用しています。
+
+- **Webアプリを体験**：https://ai-art-rating-web.vercel.app/
+- **ソースコード全体**：このGitHubリポジトリの `app.py`、`public/`、`supabase/`、`tests/`
+- **初心者におすすめの入口**：[まずはここから](docs/00_START_HERE.md)
+- **学習目標**：「この1行が何をしているか」を説明でき、自分の手で1つ改良すること。
 
 ## できること
-
-- AI画像50枚を表示し、前後移動
-- 0〜100点＋評価理由＋判断時間を保存
-- 作品のAI制作情報を読んだ後の任意の再評価
+- 50作品を左右に移動して鑑賞（`01 / 50` と進行目盛り）
+- 0～100点の採点と、任意の評価理由
+- AI制作に関する説明を読んだ後の任意の再評価
+- 判断にかかった時間の記録
 - 2作品の比較投票
-- 平均点、ジャンル別の傾向、評価分布、理由の集計
-- 自分の評価だけCSVに書き出し
-- ブラウザごとに匿名のランダム識別子を生成（ログイン不要）
+- 平均点・ジャンル別傾向・評価分布などの表示
+- 自分のブラウザに残る回答のCSVダウンロード
 
-**注意：** 画像は以前制作したテスト用50枚（1枚の画像から切り出したサンプル）。卒論用の実験では、個別生成・条件統制・同意取得などの別準備が必要。画像をサーバーへアップロードする機能は初期版では未搭載。
+**未実装**：画像のアップロード／アプリ内での画像生成／参加者の厳密な本人確認／研究用の同意・条件割当／Bot対策・レート制限。厳密な研究実験や大規模な公開利用向けに完成しているわけではありません。
 
-## 1. Macでローカル起動
+## 📖 初心者向け・公開教科書（全11章）
 
-Macのターミナルを開き、このフォルダへ移動します。`cd ` と打った後にフォルダをドラッグすれば場所を入力できます。
+| 順序 | 教材 | 何が分かるか |
+|---|---|---|
+| 0 | [はじめての人へ](docs/00_START_HERE.md) | 技術用語が分からなくても読める入口 |
+| 1 | [要件定義書](docs/01_REQUIREMENTS.md) | 何を実装し、何が未実装なのか |
+| 2 | [システム全体図](docs/02_ARCHITECTURE.md) | ブラウザ→Python→Supabaseの流れ |
+| 3 | [Python完全解説](docs/03_PYTHON_GUIDE.md) | `app.py` の関数を1つずつ理解 |
+| 4 | [HTML/CSS/JavaScript解説](docs/04_FRONTEND_GUIDE.md) | 手描きUIが動く画面になるまで |
+| 5 | [SQL・データベース解説](docs/05_DATABASE.md) | 評価がどのように蓄積・集計されるか |
+| 6 | [Mac起動・デプロイ手順書](docs/06_SETUP_DEPLOY.md) | ダウンロードからWeb公開まで |
+| 7 | [エラー対処辞典](docs/07_TROUBLESHOOTING.md) | 404・409・422・500・502・503の直し方 |
+| 8 | [セキュリティと研究倫理](docs/08_SECURITY_RESEARCH.md) | 匿名IDの限界と卒論前に必要な改善 |
+| 9 | [14日間の学習ロードマップ](docs/09_LEARNING_PLAN.md) | 1日ごとの演習で理解する |
+| 10 | [API・用語・ファイル早見表](docs/10_REFERENCE.md) | 忘れたことを検索して確認 |
+| 補足 | [公開状態と開発記録](docs/11_DEPLOYMENT_STATUS.md) | 本番サイトとGitHubの違い・検証状況 |
 
-```bash
-cd /path/to/AI_Art_Rating_Deploy
+### 学び方
+**最初は0章 → 2章 → 4章 → 3章の順番**がおすすめ。画面を見ながら「それを動かすコードはどこか？」を調べると理解しやすくなります。学習記録は [LEARNING_CHECKLIST.md](LEARNING_CHECKLIST.md) も使えます。
+
+## ファイル構成
+~~~text
+ai-art-rating-web/
+├── app.py                   # Python / FastAPI
+├── requirements.txt         # Pythonの追加パッケージ
+├── sample_manifest.csv      # 50作品の一覧
+├── public/
+│   ├── index.html           # HTML
+│   ├── styles.css           # CSS
+│   ├── app.js               # JavaScript
+│   └── images/              # 作品JPEG 50枚
+├── supabase/
+│   └── schema.sql           # Supabase用SQL
+├── tests/
+│   └── test_app.py          # APIのテスト
+├── docs/                    # 日本語の完全解説書
+├── .env.example             # 秘密情報を含まない設定例
+├── .python-version          # 推奨Pythonバージョン
+└── .gitignore               # 登録しないファイルを指定
+~~~
+
+## まずMacで動かしてみる
+Macのターミナルで `app.py` のあるフォルダに移動して実行：
+
+~~~bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m uvicorn app:app --reload
-```
+~~~
 
-ブラウザで `http://127.0.0.1:8000` を開きます。初回にファイル保存先 `data/ratings.sqlite3` が作られます。
+Safariで http://127.0.0.1:8000/ を開きます。初期状態ではSQLiteにローカル保存します。コマンドの意味やPython 3.12の推奨理由は[手順書](docs/06_SETUP_DEPLOY.md)で解説しています。
 
-**Python 3.14を使っている場合：** 必要パッケージの互換性などに問題が出たら、Python 3.12で仮想環境を作ってください。Vercelの設定は`.python-version`で3.12を指定しています。
+## Web公開の構成
+- **GitHub**：ソースを公開して履歴を残す
+- **Vercel**：Python APIとWeb画面を公開
+- **Supabase**：共通の評価データを保存
+- **ブラウザのlocalStorage**：自分の匿名IDと回答を保存
 
-## 2. Supabaseを用意
+**重要：2026-11-23時点の本番版はVercelへの直接デプロイです。GitHubへコミットしても自動で本番に反映される設定は未完了です。** 詳細は[公開状態](docs/11_DEPLOYMENT_STATUS.md)。
 
-1. https://supabase.com で無料プランのプロジェクトを作成
-2. ダッシュボードの **SQL Editor** を開き、`supabase/schema.sql` 全体を貼って実行
-3. Project URLを確認
-4. **Settings → API Keys** からサーバー向けの **Secret key**（`sb_secret_...`）を確認
+## データ・安全・研究について
+- 作品50枚は**1枚のAI生成コンタクトシートから切り出した試験用素材**。卒論の本実験に使うには刺激選定から再検討が必要です。
+- ブラウザのUUIDは本人認証ではありません。
+- **秘密鍵をGitHub、ブラウザのJavaScript、チャット、スクリーンショットへ貼らないこと。**
+- 現行の公開APIにはレート制限や研究参加への同意機能がありません。大規模利用・研究収集前に対策が必要です。
+- コードが公開されていることと、自由に再利用できるライセンスがあることは別です。`LICENSE` は未設定です。
 
-**重要：鍵はコード・GitHub・チャットへ貼らない。** `SUPABASE_URL`と`SUPABASE_SECRET_KEY`をVercelの環境変数へ登録する。ブラウザへ公開しない。SQL側では`anon`と`authenticated`の直接アクセスを許可していない。
+**技術と研究の注意点は [第8章](docs/08_SECURITY_RESEARCH.md) を必ず読んでください。**
 
-このアプリはサーバーからSupabase REST APIへアクセスし、個別回答を公開せず集計JSONのみ返します。
-
-## 3. GitHubへ保存
-
-GitHub https://github.com/new で `ai-art-rating-web` という**新しい**リポジトリを作る（既存のPHP掲示板リポジトリは使用しない）。
-
-ローカルでこのフォルダを開いたターミナルで以下を実行：
-
-```bash
-git init
-git add .
-git commit -m "Build AI Art Rating Web MVP"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ai-art-rating-web.git
-git push -u origin main
-```
-
-`YOUR_USERNAME`を自身のGitHubユーザー名に置き換えてください。GitHubの認証が必要なら指示に従ってください。
-
-※ 画像50枚を同梱しているのでGitHubのアップロードに数MBかかります。
-
-## 4. Vercelへ公開
-
-1. https://vercel.com/new を開く
-2. **Import Git Repository** から `ai-art-rating-web` を選択
-3. Python FastAPI アプリが検出されることを確認（ルートの `app.py` に `app = FastAPI(...)` が存在）
-4. **Environment Variables** に `SUPABASE_URL` と `SUPABASE_SECRET_KEY` を登録
-5. **Deploy** をクリック
-6. `https://...vercel.app/` の公開URLを確認
-7. `https://...vercel.app/api/health` を開いて、`mode` が `supabase` であることを確認
-8. 採点を1件保存し、「結果」に反映されることを確認
-
-**Vercelを先にデプロイしてDBを設定しない場合：** UIは見られても、採点保存は503エラーになります。公開環境はSQLiteの一時保存へ自動フォールバックしません。
-
-**費用：** 個人の小規模テストなら無料プランで開始できる可能性がありますが、枠・利用規約・商用条件はVercelとSupabaseの公式サイトで確認してください。クレジットカード登録や従量課金に注意。
-
-公式情報：
-- https://vercel.com/docs/frameworks/backend/fastapi
-- https://vercel.com/docs/functions/runtimes/python
-- https://supabase.com/docs/guides/api/securing-your-api
-- https://supabase.com/docs/guides/getting-started/api-keys
-
-## 5. 学習の順序
-
-1. `public/index.html` で画面の構造（HTML）を理解
-2. `public/styles.css` で余白、位置、色を変更
-3. `public/app.js` で画像切替・スライダー・API通信を理解
-4. `app.py` で `if`、関数、FastAPI、入力検証を学ぶ
-5. `supabase/schema.sql` でテーブル、主キー、制約、集計を確認
-6. GitHubに変更を記録して、再デプロイ
-
-## 6. 注意と未実装の項目
-
-- ブラウザの匿名IDは削除できるため、不正・重複回答を完全には防げません。実験本番にはログイン、割当トークン、アクセス制限などが必要。
-- 公開APIには本番向けのレート制限・Bot対策・管理者機能は未実装。初期は限定公開または小規模テストを推奨。
-- 情報提示の前後評価は任意であり、**作者情報の因果効果を検証する統制実験ではありません**。
-- 参加同意、研究倫理、提示順序ランダム化、実験条件の割当は卒論本番前に設計してください。
-- `get /api/stats` は全体集計のみ公開。匿名ブラウザIDはサーバー上に保存されます。ブラウザのlocalStorageにも自分の回答が残ります。
-- 評価理由を増やす際はHTML側の選択肢と`app.py`の許可リストを両方変更します。
-
-## 7. 確認コマンド
-
-```bash
-python -m pip install pytest
-python -m pytest -q
-```
-
-環境変数を追加して実際のSupabaseへのAPI接続も確認してください。今回は外部アカウントの接続情報がないため本番デプロイとSupabase実接続は未実施です。
+---
+このREADMEと教科書は、2026年11月23日時点のリポジトリの実装を確認して書いています。Pythonやサービス仕様は今後変わる可能性があります。
