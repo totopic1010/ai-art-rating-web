@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AI生成アートを鑑賞し、人間の美的判断を記録する実験的ギャラリー。" />
+  <title>AI Art Rating — 見る、感じる、評価する。</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <button class="wordmark" id="homeBtn" aria-label="鑑賞画面に戻る">AI ART RATING<span class="mark-dot">.</span></button>
+    <div class="top-nav">
+      <button class="nav active" data-view="gallery">鑑賞</button>
+      <button class="nav" data-view="pair">比較</button>
+      <button class="nav" data-view="results">結果 <span class="arrow">↗</span></button>
+    </div>
+  </header>
+  <main id="gallery" class="view gallery-view">
+    <aside class="ruler" aria-hidden="true"><div class="ruler-lines" id="rulerLines"></div><span class="ruler-label">ARCHIVE / 50</span></aside>
+    <section class="art-stage">
+      <div class="stage-top">
+        <button class="ghost chevron" id="previous" aria-label="前の作品">‹</button>
+        <span id="counter" class="counter">01 / 50</span>
+        <button class="ghost chevron" id="next" aria-label="次の作品">›</button>
+      </div>
+      <figure class="art-frame"><img id="artImage" alt="選択中のAI生成作品" /><figcaption><span id="artTitle"></span><span id="artGenre"></span></figcaption></figure>
+      <section class="rating-panel" aria-label="作品の評価">
+        <div class="rating-head"><span>この作品をどう感じますか。</span><span><strong id="scoreText">50</strong><span class="muted"> / 100</span></span></div>
+        <input type="range" id="score" min="0" max="100" step="1" value="50" aria-label="美しさの評価点" />
+        <div class="range-ends"><span>0</span><span>100</span></div>
+        <div class="under-rating"><button id="reasonBtn" class="text-button" aria-expanded="false">＋ 評価理由を追加</button><span id="ratedState" class="small-text"></span></div>
+        <div id="reasonArea" class="reason-area hidden"><label for="reason">評価理由（任意）</label><select id="reason"><option value="">選択しない</option><option>色彩</option><option>構図</option><option>独創性</option><option>感情</option><option>技術</option><option>その他</option></select></div>
+        <button class="primary" id="rateBtn">この評価を確定 <span>→</span></button>
+        <p class="help-note" id="status" role="status" aria-live="polite">評価は匿名の識別子で記録されます。</p>
+      </section>
+    </section>
+  </main>
+  <main id="pair" class="view secondary-view hidden"><div class="section-head"><p class="eyebrow">COMPARE</p><h1>二つの作品、どちらが美しい？</h1><p>絶対評価とは異なる、相対的な美的判断を記録します。</p></div><div class="pair-grid"><button id="pairA" class="pair-card"><img id="pairImgA" alt="比較する作品A" /><span>A を選ぶ</span></button><button id="pairB" class="pair-card"><img id="pairImgB" alt="比較する作品B" /><span>B を選ぶ</span></button></div><p id="pairStatus" class="help-note" role="status"></p><button class="outline-btn" id="anotherPair">別の組み合わせを見る ↻</button></main>
+  <main id="results" class="view secondary-view hidden"><div class="section-head"><p class="eyebrow">YOUR PERSPECTIVE</p><h1>あなたの美的判断を、見る。</h1><p>鑑賞後に、自分の評価と全体の傾向を比較できます。</p></div><div class="metrics"><div><p>あなたの評価件数</p><strong id="myCount">0</strong></div><div><p>あなたの平均点</p><strong id="myAverage">—</strong></div><div><p>みんなの平均点</p><strong id="allAverage">—</strong></div><div><p>情報提示による平均変化</p><strong id="shiftAverage">—</strong></div></div><div class="analytics-grid"><section class="chart-card"><h2>全体の評価分布</h2><div id="distribution" class="bars"></div></section><section class="chart-card"><h2>ジャンル別の傾向</h2><div id="genres" class="bars"></div></section><section class="chart-card"><h2>あなたと、みんな</h2><div id="personalComparison"></div></section><section class="chart-card"><h2>選ばれた評価理由</h2><div id="reasons" class="bars"></div></section></div><p class="footnote">このページの集計は探索的な記述統計です。研究上の因果関係や作者情報の効果を証明するものではありません。</p><button class="outline-btn" id="exportBtn">自分の評価データをCSVに保存 ↓</button></main>
+  <footer><span>AN EXPERIMENT IN AESTHETIC JUDGMENT</span><span id="storageStatus">接続確認中</span></footer>
+</div>
+<dialog id="revealDialog"><form method="dialog" class="dialog-inner"><p class="eyebrow">ABOUT THE ARTWORK</p><h2>作品の背景を知ったあとで。</h2><p>この作品は画像生成AIによって制作されたサンプル画像です。鑑賞前と同じ作品を見て、今の美的評価をつけてください。</p><p class="footnote">作者情報の提示は任意です。卒論の統制された本実験を再現するものではありません。</p><label class="dialog-label" for="revisedScore">再評価 <strong id="revisedText">50</strong> / 100</label><input type="range" id="revisedScore" min="0" max="100" value="50" /><div class="dialog-actions"><button type="button" class="outline-btn" id="skipReveal">そのまま確定</button><button type="button" class="primary" id="confirmReveal">再評価を保存 →</button></div></form></dialog>
+<script src="/app.js" defer></script>
+</body>
+</html>
