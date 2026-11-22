@@ -17,7 +17,7 @@ import uuid
 
 import httpx
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -214,5 +214,11 @@ def stats():
     return aggregate(rows, pairs)
 
 
-# Mount static frontend last, so /api paths take precedence.
-app.mount('/', StaticFiles(directory=PUBLIC, html=True), name='frontend')
+# Vercel serves public/ files as independent static assets outside the Python function.
+# Mac local development still uses the FastAPI StaticFiles mount.
+if IS_HOSTED:
+    @app.get('/')
+    def frontend_redirect():
+        return RedirectResponse(url='/index.html', status_code=302)
+else:
+    app.mount('/', StaticFiles(directory=PUBLIC, html=True), name='frontend')
